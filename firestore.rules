@@ -1,0 +1,126 @@
+/*
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+*/
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+		match /chatrooms/{chatId} {
+			allow create: if request.auth.uid == request.resource.data.owner; 
+			allow update, delete: if request.auth.uid == resource.data.owner; 
+			allow read: if true;
+			match /messages/{messageId} {
+  			allow write: if request.auth.uid == request.resource.data.owner; 
+				allow read: if true;
+			}
+		}
+		match /articles/{articleId} {
+			allow create: if request.auth.uid == request.resource.data.owner; 
+			allow update, delete: if request.auth.uid == resource.data.owner; 
+			allow read: if true;
+		}
+		match /todolists/{listId} {
+			allow create: if request.auth.uid == request.resource.data.owner; 
+			allow update, delete: if request.auth.uid == resource.data.owner; 
+			allow read: if true;
+			match /todoitems/{itemId} {
+			  allow create: if request.auth.uid == request.resource.data.owner; 
+			  allow update, delete: if request.auth.uid == resource.data.owner; 
+				allow read: if true;
+			}
+		}
+		match /owners/{ownerId} {
+			allow create: if request.auth.uid == request.resource.data.owner; 
+			allow update, delete: if request.auth.uid == resource.data.owner; 
+			allow read: if request.auth.uid == resource.data.owner;
+      		match /pets/{petId} {
+				allow create: if request.auth.uid == request.resource.data.owner; 
+				allow update, delete: if request.auth.uid == resource.data.owner; 
+				allow read: if true;
+        		match /dmh/{dmhId} {
+					allow create: if request.auth.uid != null; 
+					allow update, delete: if request.auth.uid != null; 
+					allow read: if request.auth.uid != null;
+			  	}
+				match /accounth/{accounthId} {
+			    	allow create: if request.auth.uid != null; 
+			    	allow update, delete: if request.auth.uid != null; 
+					allow read: if request.auth.uid != null;
+					match /accountd/{accountdId} {
+			    		allow create: if request.auth.uid != null; 
+			    		allow update, delete: if request.auth.uid != null; 
+				  		allow read: if request.auth.uid != null;
+			  		}
+			  	}
+			}
+		}
+		match /species/{speciesId} {
+			allow create: if request.auth.uid == request.resource.data.owner; 
+			allow update, delete: if request.auth.uid == resource.data.owner; 
+			allow read: if true;
+		}
+		match /breeds/{breedsId} {
+			allow create: if request.auth.uid == request.resource.data.owner; 
+			allow update, delete: if request.auth.uid == resource.data.owner; 
+			allow read: if true;
+		}
+		match /gender/{genderId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /neutered/{neuteredId} {
+			allow read: if request.auth.uid != null;
+		}
+		match /color/{colorId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /size/{sizeId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /character/{characterId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /environment/{environmentId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /cohabitation/{cohabitationId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /dead/{deadId} {
+			allow read: if request.auth.uid != null;
+		}
+    	match /dmsubject/{deadId} {
+			allow read: if request.auth.uid != null;
+		}
+		match /dmcontent/{deadId} {
+			allow read: if request.auth.uid != null;
+		}
+		match /mtsubject/{mtsubjectId} {
+			allow read: if request.auth.uid != null;
+		}
+		match /chargem/{chargeId} {
+			allow read: if request.auth.uid != null;
+		}
+		match /mtclass/{mtclassId} {
+			allow read: if request.auth.uid != null;
+		}
+		match /{path=**}/dmh/{dmhId} {
+      		allow read: if true;
+    	}
+		match /{path=**}/accounth/{accounthId} {
+      		allow read: if true;
+    	}
+		match /{path=**}/pets/{petId} {
+      		allow read: if true;
+    	}
+    	match /{document=**} {
+      	allow read, write: if false;
+    	}
+  	}
+}

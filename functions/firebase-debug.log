@@ -1,0 +1,16 @@
+[debug] [2020-05-19T02:09:32.620Z] ----------------------------------------------------------------------
+[debug] [2020-05-19T02:09:32.623Z] Command:       /Users/ymaki/.nodebrew/node/v14.1.0/bin/node /Users/ymaki/.nodebrew/current/bin/firebase deploy
+[debug] [2020-05-19T02:09:32.624Z] CLI Version:   8.2.0
+[debug] [2020-05-19T02:09:32.624Z] Platform:      darwin
+[debug] [2020-05-19T02:09:32.624Z] Node Version:  v14.1.0
+[debug] [2020-05-19T02:09:32.625Z] Time:          Tue May 19 2020 11:09:32 GMT+0900 (日本標準時)
+[debug] [2020-05-19T02:09:32.626Z] ----------------------------------------------------------------------
+[debug] [2020-05-19T02:09:32.626Z] 
+[debug] [2020-05-19T02:09:32.651Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-05-19T02:09:32.653Z] > authorizing via signed-in user
+[debug] [2020-05-19T02:09:32.654Z] [iam] checking project iwan-303c8 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2020-05-19T02:09:32.662Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/iwan-303c8:testIamPermissions  
+ {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2020-05-19T02:09:33.467Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 19 May 2020 02:09:33 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=636","alt-svc":"h3-27=\":443\"; ma=2592000,h3-25=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q049=\":443\"; ma=2592000,h3-Q048=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-05-19T02:09:33.470Z] >>> HTTP REQUEST POST https://iam.googleapis.com/v1/projects/iwan-303c8/serviceAccounts/iwan-303c8@appspot.gserviceaccount.com:testIamPermissions  
+ {"permissions":["iam.serviceAccounts.actAs"]}

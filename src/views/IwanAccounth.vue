@@ -305,12 +305,10 @@
           </span> 
         </div>  
 
-                      
-
       </div>
       <br>
-      <pre>{{ selected }}</pre>
-      <iframe :src="preview" scrolling="no"></iframe>
+      <!--<pre>{{ selected }}</pre>-->
+      <!--<iframe :src="preview" scrolling="no"></iframe>-->
     </div>
   </section>
 </template>

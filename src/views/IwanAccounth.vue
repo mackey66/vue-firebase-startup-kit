@@ -1,6 +1,6 @@
 <template>
   <section class="section">
-    <div class="container is-mobile is-fullhd" id="target" v-if="ownerlist">
+    <div class="container is-fullhd" id="target" v-if="ownerlist">
       <div class="box_">
         <div class="title_screen m-b-20">
           <span class="icon has-text-info"><i class="fab fa-amazon-pay"></i></span>
@@ -55,129 +55,131 @@
               </div>
             </div>
           </div>
-          <!-- TableヘッダとsubheadingはeditModeとelse（列数含め）どちらも同じようにしないとthis.name is not a functionエラーになるので注意! -->
-          <b-table :data="accountdItems" :mobile-cards="false" narrowed :selected.sync="selected" focusable>
-            <template slot-scope="p">
-              <b-table-column field="no" class="subtitle is-7" style="vertical-align: middle;" label="" width="30">{{ p.index + 1 }}</b-table-column>
-              <b-table-column field="date" label="日付" width="80">
-                <template slot="subheading">
-                  合計:
-                </template>
-                <p class="control" >
-                  <b-datepicker v-if="p.row.condDate" 
-                  v-bind:value="p.row.condDate.toDate()" 
-                  v-on:input="saveAccountdDate(p.row.id, $event)" 
-                  locale="en_US" editable
-                  :date-formatter="formatter"
-                  tabindex="-1"
+          <div class="table-container">
+            <!-- TableヘッダとsubheadingはeditModeとelse（列数含め）どちらも同じようにしないとthis.name is not a functionエラーになるので注意! -->
+            <b-table :data="accountdItems" :mobile-cards="false" narrowed :selected.sync="selected" focusable >
+              <template slot-scope="p">
+                <b-table-column field="no" class="subtitle is-7" style="vertical-align: middle;" label="" width="30">{{ p.index + 1 }}</b-table-column>
+                <b-table-column field="date" label="日付" width="80">
+                  <template slot="subheading">
+                    合計:
+                  </template>
+                  <p class="control" >
+                    <b-datepicker v-if="p.row.condDate" 
+                    v-bind:value="p.row.condDate.toDate()" 
+                    v-on:input="saveAccountdDate(p.row.id, $event)" 
+                    locale="en_US" editable
+                    :date-formatter="formatter"
+                    tabindex="-1"
+                    >
+                    </b-datepicker>
+                    <b-datepicker v-else 
+                    v-on:input="saveAccountdDate(p.row.id, $event)" 
+                    locale="en_US" editable
+                    :date-formatter="formatter"
+                    tabindex="-1"
+                    >
+                    </b-datepicker>
+                  </p>
+                </b-table-column>
+                <b-table-column field="itemCd" label="コード" width="90">
+                  <b-input type="text" :value="p.row.itemCd" @change.native="saveAccountdItemCd(p.row.id, $event.target.value)" />
+                </b-table-column>
+                <b-table-column field="mtsubject" label="科目" width="110">
+                  <b-select v-model="p.row.mtsubject" tabindex="-1"
+                    @input="saveAccountdMtsubject(p.row.id, $event); p.row.mtclass=''" 
                   >
-                  </b-datepicker>
-                  <b-datepicker v-else 
-                  v-on:input="saveAccountdDate(p.row.id, $event)" 
-                  locale="en_US" editable
-                  :date-formatter="formatter"
-                  tabindex="-1"
-                  >
-                  </b-datepicker>
-                </p>
-              </b-table-column>
-              <b-table-column field="itemCd" label="コード" width="90">
-                <b-input type="text" :value="p.row.itemCd" @change.native="saveAccountdItemCd(p.row.id, $event.target.value)" />
-              </b-table-column>
-              <b-table-column field="mtsubject" label="科目" width="110">
-                <b-select v-model="p.row.mtsubject" tabindex="-1"
-                  @input="saveAccountdMtsubject(p.row.id, $event); p.row.mtclass=''" 
-                >
-                  <option v-for="value in mtsubjectList" :key="value.id" v-bind:value="value.id">
-                    {{ value.name }}
-                  </option>
-                </b-select>
-              </b-table-column>
-              <b-table-column field="mtclass" label="" width="140">
-                <b-field>
-                  <b-input type="text" :value="getMtclassName(p.row.mtclass)" tabindex="-1" style="width: 90px;" readonly />
-                  <b-select v-model="p.row.mtclass" tabindex="-1" style="width: 48px;"
-                    @input="saveAccountdMtclass(p.row.id, $event);"
-                    @focus="focusMtclassSelect(p.row.mtsubject, p.row.mtclass)" @touchstart="focusMtclassSelect(p.row.mtsubject, p.row.mtclass)"
-                  >
-                    <option v-for="value in mtclassExtracted" :key="value.id" v-bind:value="value.id">
+                    <option v-for="value in mtsubjectList" :key="value.id" v-bind:value="value.id">
                       {{ value.name }}
                     </option>
                   </b-select>
-                </b-field>
-              </b-table-column>
-              <b-table-column field="item" label="内容" width="280">
-                <b-field>
-                  <b-input type="text" :value="p.row.item" @change.native="saveAccountdItem(p.row.id, $event.target.value)" tabindex="-1" style="min-width: 220px;"/>
-                  <b-input type="text" :value="p.row.itemId" tabindex="-1" style="width: 0px;"/>
-                  <b-select v-model="p.row.itemId" style="width: 48px;" tabindex="-1"
-                    @change.native="p.row.itemCd = getChargeItemCd($event.target.value); saveAccountdItemCd(p.row.id, p.row.itemCd);"
-                    @focus="focusChargemSelect(p.row.mtsubject, p.row.mtclass)" @touchstart="focusChargemSelect(p.row.mtsubject, p.row.mtclass)" 
-                  >
-                    <option v-for="value in chargemExtracted" :key="value.id" v-bind:value="value.id">
-                      {{ value.itemCd }} {{ value.item }} {{ numberFormatterCurrency(value.unitPrice) }}
-                    </option>                 
-                  </b-select>
-                </b-field>
-              </b-table-column>
-              <b-table-column field="unitPrice" label="単価" width="100" numeric>
-                <b-input type="number" :value="p.row.unitPrice" @change.native="saveAccountdUnitPrice(p.row.id, $event.target.value); saveAccountdAmount(p.row.id, $event.target.value * p.row.quantity);" />
-              </b-table-column>
-              <b-table-column field="quantity" label="数量" width="70" numeric>
-                <template slot="subheading">
-                  <br>税込
-                </template>
-                <b-input type="number" tabindex="-1" :value="p.row.quantity" @change.native="saveAccountdQuantity(p.row.id, $event.target.value); saveAccountdAmount(p.row.id, $event.target.value * p.row.unitPrice);" />
-              </b-table-column>
-              <b-table-column field="amount" label="金額" width="90" numeric>
-                <template slot="subheading">
-                  {{ numberFormatterCurrency(sum) }}<br>{{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}
-                </template>
-                <div v-if="amountEditable">
-                  <b-input type="number" :value="p.row.amount" @change.native="saveAccountdAmount(p.row.id, $event.target.value)" tabindex="-1"/>
-                </div>
-                <div style="padding-top: 7px" v-else>
-                  {{ numberFormatterCurrency(p.row.amount) }}
-                </div>
-              </b-table-column>
-              <b-table-column field="tax" style="padding-top: 11px" label="税" width="140">
-                <template slot="subheading" style="font-weight: normal;">
-                  (内:{{ numberFormatterCurrency(taxIn) }})<br>(外:{{ numberFormatterCurrency(taxEx) }})
-                </template>
-                <section>
-                  <div class="block" >
-                    <b-radio v-model="p.row.tax" native-value="1" size="is-small" @change.native="saveAccountdTax(p.row.id, p.row.tax)">外</b-radio>
-                    <b-radio v-model="p.row.tax" native-value="2" size="is-small" @change.native="saveAccountdTax(p.row.id, p.row.tax)">内</b-radio>
-                    <b-radio v-model="p.row.tax" native-value="3" size="is-small" @change.native="saveAccountdTax(p.row.id, p.row.tax)">非</b-radio>
+                </b-table-column>
+                <b-table-column field="mtclass" label="" width="140">
+                  <b-field>
+                    <b-input type="text" :value="getMtclassName(p.row.mtclass)" tabindex="-1" style="width: 90px;" readonly />
+                    <b-select v-model="p.row.mtclass" tabindex="-1" style="width: 48px;"
+                      @input="saveAccountdMtclass(p.row.id, $event);"
+                      @focus="focusMtclassSelect(p.row.mtsubject, p.row.mtclass)" @touchstart="focusMtclassSelect(p.row.mtsubject, p.row.mtclass)"
+                    >
+                      <option v-for="value in mtclassExtracted" :key="value.id" v-bind:value="value.id">
+                        {{ value.name }}
+                      </option>
+                    </b-select>
+                  </b-field>
+                </b-table-column>
+                <b-table-column field="item" label="内容" width="280">
+                  <b-field>
+                    <b-input type="text" :value="p.row.item" @change.native="saveAccountdItem(p.row.id, $event.target.value)" tabindex="-1" style="min-width: 220px;"/>
+                    <b-input type="text" :value="p.row.itemId" tabindex="-1" style="width: 0px;"/>
+                    <b-select v-model="p.row.itemId" style="width: 48px;" tabindex="-1"
+                      @change.native="p.row.itemCd = getChargeItemCd($event.target.value); saveAccountdItemCd(p.row.id, p.row.itemCd);"
+                      @focus="focusChargemSelect(p.row.mtsubject, p.row.mtclass)" @touchstart="focusChargemSelect(p.row.mtsubject, p.row.mtclass)" 
+                    >
+                      <option v-for="value in chargemExtracted" :key="value.id" v-bind:value="value.id">
+                        {{ value.itemCd }} {{ value.item }} {{ numberFormatterCurrency(value.unitPrice) }}
+                      </option>                 
+                    </b-select>
+                  </b-field>
+                </b-table-column>
+                <b-table-column field="unitPrice" label="単価" width="100" numeric>
+                  <b-input type="number" :value="p.row.unitPrice" @change.native="saveAccountdUnitPrice(p.row.id, $event.target.value); saveAccountdAmount(p.row.id, $event.target.value * p.row.quantity);" />
+                </b-table-column>
+                <b-table-column field="quantity" label="数量" width="70" numeric>
+                  <template slot="subheading">
+                    <br>税込
+                  </template>
+                  <b-input type="number" tabindex="-1" :value="p.row.quantity" @change.native="saveAccountdQuantity(p.row.id, $event.target.value); saveAccountdAmount(p.row.id, $event.target.value * p.row.unitPrice);" />
+                </b-table-column>
+                <b-table-column field="amount" label="金額" width="90" numeric>
+                  <template slot="subheading">
+                    {{ numberFormatterCurrency(sum) }}<br>{{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}
+                  </template>
+                  <div v-if="amountEditable">
+                    <b-input type="number" :value="p.row.amount" @change.native="saveAccountdAmount(p.row.id, $event.target.value)" tabindex="-1"/>
                   </div>
-                </section>
-              </b-table-column>
-              <b-table-column field="insurance" style="padding-top: 11px" label="保険" width="120">
-                <template slot="subheading">
-                  保:{{ numberFormatterCurrency(insExpense) }}<br>請:{{ numberFormatterCurrency(ownerExpense) }}
-                </template>
-                <b-checkbox v-model="p.row.insurance" @change.native="saveAccountdInsurance(p.row.id, p.row.insurance)"></b-checkbox>
-              </b-table-column>
-              <b-table-column label="" width="50">
-                <div class="level-right" style="margin-top:0px; margin-bottom:0px">
-                  <b-button @click="delAccountd(p.row.id)" type="is-danger" icon-left="fas fa-trash" style="margin-left:4px" tabindex="-1"/>
-                </div>
-              </b-table-column>
-            </template>
-            <template slot="footer">
-              <nav class="level">
-                <div class="level-left">                 
-                </div>
-                <!--<div class="level-right" style="margin-right:15.5rem">
-                  <div class="m-l-20">合計(税込): {{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}</div>
-                </div>-->
-                <!--<div class="level-right" style="margin-right:4.3rem">
-                  <div class="m-l-20">合計: {{ numberFormatterCurrency(sum) }}</div>
-                  <div class="m-l-20" style="font-weight: normal;">外:{{ numberFormatterCurrency(taxEx) }} 内:{{ numberFormatterCurrency(taxIn) }}</div>
-                </div>-->              
-              </nav>
-            </template>
-          </b-table>
+                  <div style="padding-top: 7px" v-else>
+                    {{ numberFormatterCurrency(p.row.amount) }}
+                  </div>
+                </b-table-column>
+                <b-table-column field="tax" style="padding-top: 11px" label="税" width="140">
+                  <template slot="subheading" style="font-weight: normal;">
+                    (内:{{ numberFormatterCurrency(taxIn) }})<br>(外:{{ numberFormatterCurrency(taxEx) }})
+                  </template>
+                  <section>
+                    <div class="block" >
+                      <b-radio v-model="p.row.tax" native-value="1" size="is-small" @change.native="saveAccountdTax(p.row.id, p.row.tax)">外</b-radio>
+                      <b-radio v-model="p.row.tax" native-value="2" size="is-small" @change.native="saveAccountdTax(p.row.id, p.row.tax)">内</b-radio>
+                      <b-radio v-model="p.row.tax" native-value="3" size="is-small" @change.native="saveAccountdTax(p.row.id, p.row.tax)">非</b-radio>
+                    </div>
+                  </section>
+                </b-table-column>
+                <b-table-column field="insurance" style="padding-top: 11px" label="保険" width="120">
+                  <template slot="subheading">
+                    保:{{ numberFormatterCurrency(insExpense) }}<br>請:{{ numberFormatterCurrency(ownerExpense) }}
+                  </template>
+                  <b-checkbox v-model="p.row.insurance" @change.native="saveAccountdInsurance(p.row.id, p.row.insurance)"></b-checkbox>
+                </b-table-column>
+                <b-table-column label="" width="50">
+                  <div class="level-right" style="margin-top:0px; margin-bottom:0px">
+                    <b-button @click="delAccountd(p.row.id)" type="is-danger" icon-left="fas fa-trash" style="margin-left:4px" tabindex="-1"/>
+                  </div>
+                </b-table-column>
+              </template>
+              <template slot="footer">
+                <nav class="level">
+                  <div class="level-left">                 
+                  </div>
+                  <!--<div class="level-right" style="margin-right:15.5rem">
+                    <div class="m-l-20">合計(税込): {{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}</div>
+                  </div>-->
+                  <!--<div class="level-right" style="margin-right:4.3rem">
+                    <div class="m-l-20">合計: {{ numberFormatterCurrency(sum) }}</div>
+                    <div class="m-l-20" style="font-weight: normal;">外:{{ numberFormatterCurrency(taxEx) }} 内:{{ numberFormatterCurrency(taxIn) }}</div>
+                  </div>-->              
+                </nav>
+              </template>
+            </b-table>
+          </div>
 
           <span v-if="isOwner">
             <div class="level is-mobile">
@@ -233,61 +235,62 @@
               </div>
             </div>
           </div>
-          
-          <b-table :data="accountdItems" :mobile-cards="false" :selected.sync="selected" narrowed focusable>
-            <template slot-scope="p">
-              <b-table-column field="no" class="subtitle is-7" style="vertical-align: middle;" label="" width="30">{{ p.index + 1 }}</b-table-column>
-              <b-table-column field="date" label="日付" width="60">
-                <template slot="subheading">
-                  合計:
-                </template>
-                {{ dateFormatterMd(p.row.condDate) }}
-              </b-table-column>
-              <b-table-column field="itemCd" label="コード" width="80">{{ p.row.itemCd }}</b-table-column>
-              <b-table-column field="mtsubject" label="科目" width="80">{{ getMtsubjectName(p.row.mtsubject) }}</b-table-column>
-              <b-table-column field="mtclass" label=" " width="80">{{ getMtclassName(p.row.mtclass) }}</b-table-column>
-              <b-table-column field="item" label="内容" width="290">{{ p.row.item }}</b-table-column>
-              <b-table-column field="unitPrice" class="has-text-right" label="単価" width="90" numeric>{{ numberFormatterCurrency(p.row.unitPrice) }}</b-table-column>
-              <b-table-column field="quantity" class="has-text-right" label="数量" width="50" numeric>
-                <template slot="subheading">
-                  <br>税込
-                </template>
-                {{ numberFormatter(p.row.quantity) }}
-              </b-table-column>
-              <b-table-column field="amount" class="has-text-right" label="金額" width="90" numeric>
-                <template slot="subheading">
-                  {{ numberFormatterCurrency(sum) }}<br>{{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}
-                </template>
-                {{ numberFormatterCurrency(p.row.amount) }}
-              </b-table-column>
-              <b-table-column field="tax" label="税" width="140">
-                <template slot="subheading" style="font-weight: normal;">
-                  (内:{{ numberFormatterCurrency(taxIn) }})<br>(外:{{ numberFormatterCurrency(taxEx) }})
-                </template>
-                <div class="block">
-                  <b-radio v-model="p.row.tax" native-value="1" disabled size="is-small">外</b-radio>
-                  <b-radio v-model="p.row.tax" native-value="2" disabled size="is-small">内</b-radio>
-                  <b-radio v-model="p.row.tax" native-value="3" disabled size="is-small">非</b-radio>
-                </div>
-              </b-table-column>
-              <b-table-column field="insurance" label="保険" width="120">
-                <template slot="subheading">
-                  保:{{ numberFormatterCurrency(insExpense) }}<br>請:{{ numberFormatterCurrency(ownerExpense) }}
-                </template>
-                <b-checkbox v-model="p.row.insurance" disabled></b-checkbox>
-              </b-table-column>
-              <b-table-column width="0" />
-            </template>
-            <template slot="footer">
-              <nav class="level">
-                <div class="level-left">                 
-                </div>
-                <!--<div class="level-right" style="margin-right:15.5rem">
-                  <div class="m-l-20">合計(税込): {{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}</div>
-                </div>-->             
-              </nav>
-            </template>
-          </b-table>
+          <div class="table-container">
+            <b-table :data="accountdItems" :mobile-cards="false" :selected.sync="selected" narrowed focusable >
+              <template slot-scope="p">
+                <b-table-column field="no" class="subtitle is-7" style="vertical-align: middle;" label="" width="30">{{ p.index + 1 }}</b-table-column>
+                <b-table-column field="date" label="日付" width="60">
+                  <template slot="subheading">
+                    合計:
+                  </template>
+                  {{ dateFormatterMd(p.row.condDate) }}
+                </b-table-column>
+                <b-table-column field="itemCd" label="コード" width="80">{{ p.row.itemCd }}</b-table-column>
+                <b-table-column field="mtsubject" label="科目" width="80">{{ getMtsubjectName(p.row.mtsubject) }}</b-table-column>
+                <b-table-column field="mtclass" label=" " width="80">{{ getMtclassName(p.row.mtclass) }}</b-table-column>
+                <b-table-column field="item" label="内容" width="290">{{ p.row.item }}</b-table-column>
+                <b-table-column field="unitPrice" class="has-text-right" label="単価" width="90" numeric>{{ numberFormatterCurrency(p.row.unitPrice) }}</b-table-column>
+                <b-table-column field="quantity" class="has-text-right" label="数量" width="50" numeric>
+                  <template slot="subheading">
+                    <br>税込
+                  </template>
+                  {{ numberFormatter(p.row.quantity) }}
+                </b-table-column>
+                <b-table-column field="amount" class="has-text-right" label="金額" width="90" numeric>
+                  <template slot="subheading">
+                    {{ numberFormatterCurrency(sum) }}<br>{{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}
+                  </template>
+                  {{ numberFormatterCurrency(p.row.amount) }}
+                </b-table-column>
+                <b-table-column field="tax" label="税" width="140">
+                  <template slot="subheading" style="font-weight: normal;">
+                    (内:{{ numberFormatterCurrency(taxIn) }})<br>(外:{{ numberFormatterCurrency(taxEx) }})
+                  </template>
+                  <div class="block">
+                    <b-radio v-model="p.row.tax" native-value="1" disabled size="is-small">外</b-radio>
+                    <b-radio v-model="p.row.tax" native-value="2" disabled size="is-small">内</b-radio>
+                    <b-radio v-model="p.row.tax" native-value="3" disabled size="is-small">非</b-radio>
+                  </div>
+                </b-table-column>
+                <b-table-column field="insurance" label="保険" width="120">
+                  <template slot="subheading">
+                    保:{{ numberFormatterCurrency(insExpense) }}<br>請:{{ numberFormatterCurrency(ownerExpense) }}
+                  </template>
+                  <b-checkbox v-model="p.row.insurance" disabled></b-checkbox>
+                </b-table-column>
+                <b-table-column width="0" />
+              </template>
+              <template slot="footer">
+                <nav class="level">
+                  <div class="level-left">                 
+                  </div>
+                  <!--<div class="level-right" style="margin-right:15.5rem">
+                    <div class="m-l-20">合計(税込): {{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}</div>
+                  </div>-->             
+                </nav>
+              </template>
+            </b-table>
+          </div>
 
           <span v-if="isOwner">
             <div class="level is-mobile">

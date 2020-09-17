@@ -2,7 +2,7 @@
   <div class="source-link">
     <a
       target="_blank"
-      :href="`https://github.com/snakajima/vue-firebase-startup-kit/blob/playground/src/${path}`"
+      :href="`https://github.com/mackey66/vue-firebase-startup-kit/blob/master/src/${path}`"
     >View source code of this page</a>
   </div>
 </template>

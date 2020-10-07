@@ -21,6 +21,14 @@
             </b-field>
           </div>
         </div>
+        <div class="columns m-b-5">
+          <div class="column is-grouped is-12-mobile is-8-tablet is-6-desktop is-4-widescreen is-4-fullhd">
+            <b-field label="飼主名カナ" :label-position="labelPosition">
+              <b-input v-model="nameSeiKana" placeholder="姓カナ" ></b-input> 
+              <b-input v-model="nameNaKana" placeholder="名カナ" ></b-input>
+            </b-field>
+          </div>
+        </div>
       </div>
       <div class="columns m-b-5">    
         <div class="column is-4-mobile is-3-tablet is-2-desktop is-2-widescreen is-2-fullhd">
@@ -219,12 +227,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { BaseDocument } from "../scripts/datatypes";
-import { OwnerList, Pets } from "../scripts/datatypes";
+import Vue from "vue"
+import { Component, Prop } from "vue-property-decorator"
+import { BaseDocument } from "../scripts/datatypes"
+import { OwnerList, Pets } from "../scripts/datatypes"
 import KenAll from 'ken-all';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
 
 @Component({
@@ -235,24 +243,26 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate';
 })
 
 export default class EditableTitle extends Vue {
-  title = "abc";
-  address = "";
-  no = 0;
-  nameSei = "";
-  nameNa = "";
-  name = "";
-  zip = "";
-  address1 = "";
-  address2 = "";
-  address3 = "";
-  phone1 = "";
-  phone2 = "";
-  phone3= "";
-  occupation = "";
-  editMode = false;
-  @Prop() document!: OwnerList;
-  @Prop() petItems!: Array<Pets>;
-  @Prop() refOwner!: firebase.firestore.DocumentReference;
+  title = "abc"
+  address = ""
+  no = 0
+  nameSei = ""
+  nameNa = ""
+  nameSeiKana = ""
+  nameNaKana = ""
+  name = ""
+  zip = ""
+  address1 = ""
+  address2 = ""
+  address3 = ""
+  phone1 = ""
+  phone2 = ""
+  phone3= ""
+  occupation = ""
+  editMode = false
+  @Prop() document!: OwnerList
+  @Prop() petItems!: Array<Pets>
+  @Prop() refOwner!: firebase.firestore.DocumentReference
   mounted() {
     //this.title = this.document.title;
     this.title = this.document.no + ": " + this.document.nameSei + this.document.nameNa;
@@ -260,6 +270,8 @@ export default class EditableTitle extends Vue {
     this.no = this.document.no;
     this.nameSei = this.document.nameSei;
     this.nameNa = this.document.nameNa;
+    this.nameSeiKana = this.document.nameSeiKana;
+    this.nameNa = this.document.nameNaKana;
     this.name = this.document.nameSei + " " + this.document.nameNa;
     this.zip = this.document.zip;
     this.address1 = this.document.address1;
@@ -299,6 +311,8 @@ export default class EditableTitle extends Vue {
     this.address = this.zip + " " + this.address1 + this.address2 + this.address3;
     this.document.nameSei = this.nameSei;
     this.document.nameNa = this.nameNa;
+    this.document.nameSeiKana = this.nameSeiKana;
+    this.document.nameNaKana = this.nameNaKana;
     this.document.zip = this.zip;
     this.document.address1 = this.address1;
     this.document.address2 = this.address2;
@@ -328,6 +342,8 @@ export default class EditableTitle extends Vue {
         ownerFullname: this.nameSei + " " + this.nameNa,
         ownerNameSei: this.nameSei,
         ownerNameNa: this.nameNa,
+        ownerNameSeiKana: this.nameSeiKana,
+        ownerNameNaKana: this.nameNaKana,
         keywords: [String(this.no), this.nameSei, this.nameNa, doc.name, spname, brname_[0], brname_[1], brname_[2]]
       });
       // dmh

@@ -20,7 +20,7 @@
         </div>
       </div>  
     </div>
-    <span v-if="articles.length > 0">
+    <span v-if="$store.state.dmh.length > 0">
       <b-button class="button is-light" icon-left="fas fa-print" @click="printList">リスト印刷</b-button>
       <b-button class="button is-light" icon-left="fas fa-print" @click="printPostcard" style="margin-left:1rem">ハガキ印刷</b-button>
 
@@ -236,7 +236,7 @@ export default class ListViewIwanDmh extends Vue {
 
   printList() {
     // 印刷データをlocalStrageに保存
-    const parsed = JSON.stringify(this.articles);
+    const parsed = JSON.stringify(this.$store.state.dmh);
     localStorage.setItem('articles', parsed);
     // リスト印刷用ウインドウを開く
     window.open("dmlist", '_blank')
@@ -244,7 +244,7 @@ export default class ListViewIwanDmh extends Vue {
 
   printPostcard() {
     // 印刷データをlocalStrageに保存
-    const parsed = JSON.stringify(this.articles);
+    const parsed = JSON.stringify(this.$store.state.dmh);
     localStorage.setItem('articles', parsed);
     // はがき印刷用ウインドウを開く
     window.open("postcard", '_blank')

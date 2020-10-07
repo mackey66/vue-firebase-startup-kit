@@ -55,6 +55,22 @@
                     </div>
                   </ValidationProvider>
                 </div>
+                <div class="column is-4">
+                  <ValidationProvider rules="required">
+                    <div slot-scope="ProviderProps">
+                      <b-field label="名前カナ※" :label-position="labelPosition"
+                        :type="{
+                          'is-danger': ProviderProps.errors[0],
+                        }"
+                        :message="{
+                          '必須項目です': ProviderProps.failedRules['required']
+                        }"
+                      >              
+                        <b-input v-model="nameKana" style="max-width: 300px;"></b-input>
+                      </b-field>
+                    </div>
+                  </ValidationProvider>
+                </div>
               </div>
               <div class="columns m-b-5">
                 <div class="column is-2">
@@ -287,37 +303,38 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
   }
 })
 export default class Chatroom extends Vue {
-  no = "";
-  petId = "";
-  name = ""; 
+  no = ""
+  petId = ""
+  name = ""
+  nameKana = ""
   breed = "";
-  breedName = '';
-  birth = "";
-  ownerlist: OwnerList | null = null;
-  petItems: Array<Pets> = [];
-  detacher?: firebase.Unsubscribe;
-  createPet = false;
-  species: Species | null = null;
-  breeds: Breeds | null = null;
-  breedsExtracted: Breeds | null = null;
-  speciesSelected = '';
-  breedSelected = '';
-  genderSelected = '';
-  neuteredSelected = '';
-  gender: IwanBaseDocument | null = null;
-  neutered: IwanBaseDocument | null = null;
-  neuteredRemarks = "";
-  size = '';
-  sizeList: IwanBaseDocument | null = null;
-  color = "";
-  colorList: IwanBaseDocument | null = null;
-  since = "";
-  character = "";
-  characterList: IwanBaseDocument | null = null;
-  environment = "";
-  environmentList: IwanBaseDocument | null = null;
-  cohabitation = "";
-  errorNo = false;
+  breedName = ''
+  birth = ""
+  ownerlist: OwnerList | null = null
+  petItems: Array<Pets> = []
+  detacher?: firebase.Unsubscribe
+  createPet = false
+  species: Species | null = null
+  breeds: Breeds | null = null
+  breedsExtracted: Breeds | null = null
+  speciesSelected = ''
+  breedSelected = ''
+  genderSelected = ''
+  neuteredSelected = ''
+  gender: IwanBaseDocument | null = null
+  neutered: IwanBaseDocument | null = null
+  neuteredRemarks = ""
+  size = ''
+  sizeList: IwanBaseDocument | null = null
+  color = ""
+  colorList: IwanBaseDocument | null = null
+  since = ""
+  character = ""
+  characterList: IwanBaseDocument | null = null
+  environment = ""
+  environmentList: IwanBaseDocument | null = null
+  cohabitation = ""
+  errorNo = false
 
   //@Prop() readonly path!: string; 2020-06-16 +
 
@@ -498,6 +515,18 @@ export default class Chatroom extends Vue {
   }
 
   async handlePost() {
+    let spname = this.getSpeciesName(this.speciesSelected)
+    if (!spname) spname = ""
+    let brname = this.breedName
+    let brname_: string[] = ["","",""]
+    if (!brname) {
+      brname = ""
+    } else {
+      brname = brname.replace(/・/g, ' ')
+      brname_ = brname.split(' ')
+      if (!brname_[1]) brname_[1] = ""
+      if (!brname_[2]) brname_[2] = ""
+    }
     await this.refOwner.collection("pets").add({
       owner: this.$store.state.user.uid,
       ownerName: this.$store.state.user.displayName,
@@ -508,6 +537,7 @@ export default class Chatroom extends Vue {
       ownerNo: this.ownerlist!.no,
       ownerFullname: this.ownerlist!.nameSei + " " + this.ownerlist!.nameNa,
       name: this.name,
+      nameKana: this.nameKana,
       species: this.speciesSelected,
       speciesName: this.getSpeciesName(this.speciesSelected),
       breed: this.breedSelected,
@@ -522,7 +552,8 @@ export default class Chatroom extends Vue {
       environment: this.environment,
       cohabitation: this.cohabitation,
       dead: 0,
-      completed: false
+      completed: false,
+      keywords: [String(this.ownerlist!.no), this.ownerlist!.nameSei, this.ownerlist!.nameNa, this.name, spname, brname_[0], brname_[1], brname_[2]]
     });
     this.no = "";
     this.name = "";

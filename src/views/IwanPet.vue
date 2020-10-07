@@ -5,12 +5,36 @@
         <span class="icon has-text-info"><i class="fas fa-dog"></i></span>
         <span class="h2">プロフィール</span>
         <div class="m-b-20"></div>
-        <owner-title :document="ownerlist" :refDocument="refOwner" @deleted="handleListDelete" @petCreate="createPet = $event" @gotoOwner="gotoOwner"/>
+        <!--<owner-title :document="ownerlist" :refDocument="refOwner" @deleted="handleListDelete" @petCreate="createPet = $event" @gotoOwner="gotoOwner"/>-->
         
         <span v-if="petlist"> 
           <div v-if="editMode">
             <div v-if="hasUser" class="m-b-5">
               <ValidationObserver ref="obs" v-slot="ObserverProps">
+                <div class="columns is-mobile m-b-5">
+                  <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" >No:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static" v-bind:value="ownerNo" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column is-6-mobile is-6-tablet is-5-desktop is-5-widescreen is-4-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 60px">飼主名:</label>
+                      </div>
+                      <input class="input is-static" v-bind:value="ownerFullname" readonly>
+                    </div>
+                  </div>
+                </div>
                 <div class="columns is-mobile m-b-5">
                   <div class="column is-2-mobile is-2-tablet is-1-desktop is-1-widescreen is-1-fullhd">
                     <ValidationProvider rules="required|max:3|numeric">
@@ -48,6 +72,22 @@
                           }"
                         >              
                           <b-input v-model="name" style="max-width: 300px;"></b-input> 
+                        </b-field>
+                      </div>
+                    </ValidationProvider>
+                  </div>
+                  <div class="column is-6-mobile is-5-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+                    <ValidationProvider rules="required">
+                      <div slot-scope="ProviderProps">
+                        <b-field label="名前カナ" :label-position="labelPosition" 
+                          :type="{
+                            'is-danger': ProviderProps.errors[0],
+                          }"
+                          :message="{
+                            '必須項目です': ProviderProps.failedRules['required']
+                          }"
+                        >              
+                          <b-input v-model="nameKana" style="max-width: 300px;"></b-input> 
                         </b-field>
                       </div>
                     </ValidationProvider>
@@ -290,149 +330,162 @@
             </div>
           </div>
           <h2 v-else>
-            <!--<table class="table is-bordered">
-              <tbody>
-                <tr>
-                  <th>Pet No</th>
-                  <td>{{ petlist.no }}</td>
-                  <th>Pet ID</th>
-                  <td>{{ petlist.petId }}</td>
-                  <th>名前</th>
-                  <td>{{ petlist.name }}</td>
-                </tr>
-                <tr>
-                  <th>種</th>
-                  <td>{{ petlist.speciesSelected }}</td>
-                  <th>品種</th>
-                  <td colspan="3">{{ petlist.breedName }}</td>               
-                </tr>
-                <tr>
-                  <th>性別</th>
-                  <td>{{ petlist.genderSelected }}</td>
-                  <th>去勢/避妊</th>
-                  <td>{{ petlist.neuteredSelected }}</td>
-                  <th>生年月日</th>
-                  <td>{{ birth_ }}</td>
-                </tr>
-              </tbody>
-            </table>-->
             <div class="columns is-mobile m-b-0">
-              <div class="column is-2-mobile is-2-tablet is-2-desktop is-2-widescreen is-1-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" >PetNo:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="petlist.no" readonly>
-                      </p>
+              <div class="column is-12-mobile is-10-tablet is-10-desktop is-10-widescreen is-10-fullhd">
+                <div class="columns is-mobile m-b-0">
+                  <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" >No:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="ownerNo" readonly>
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <div class="column is-6-mobile is-6-tablet is-5-desktop is-5-widescreen is-4-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 60px">飼主名:</label>
+                      </div>
+                      <input class="input is-static_" v-bind:value="ownerFullname" readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="columns is-mobile m-b-0">
+                  <div class="column is-2-mobile is-2-tablet is-2-desktop is-2-widescreen is-1-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" >PetNo:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="petlist.no" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-2-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" >PetID:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="petlist.petId" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column is-7-mobile is-6-tablet is-5-desktop is-4-widescreen is-3-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left">名前:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="petlist.name" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="columns is-mobile m-b-0">
+                  <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 70px">種:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="getSpeciesName(petlist.species)" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column is-8-mobile is-8-tablet is-7-desktop is-6-widescreen is-5-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 80px">品種:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="petlist.breedName" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="columns is-mobile m-b-0">
+                  <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 70px">性別:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="getGenderName(petlist.gender)" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 80px">去勢/避妊:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="getNeuteredName(petlist.neutered)" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column is-5-mobile is-4-tablet is-4-desktop is-3-widescreen is-2-fullhd">
+                    <div class="field is-horizontal">
+                      <div class="field-label is-normal">
+                        <label class="label has-text-left" style="min-width: 80px">生年月日:</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field">
+                          <p class="control">
+                            <input class="input is-static_" v-bind:value="birth_" readonly>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
                 </div>
               </div>
-              <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-2-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" >PetID:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="petlist.petId" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              <div class="column is-0-mobile is-2-tablet is-2-desktop is-2-widescreen is-2-fullhd">
+                <figure class="image is-300x200">
+                  <!--<img id="image">-->
+                  <!--<v-img
+                    :src="image"
+                    aspect-ratio="1"
+                  >
+                  </v-img>-->
+                  <img v-bind:src="image">
+                </figure>
               </div>
-              <div class="column is-7-mobile is-6-tablet is-5-desktop is-4-widescreen is-3-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left">名前:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="petlist.name" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="columns is-mobile m-b-0">
-              <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" style="min-width: 70px">種:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="getSpeciesName(petlist.species)" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="column is-8-mobile is-8-tablet is-7-desktop is-6-widescreen is-5-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" style="min-width: 80px">品種:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="petlist.breedName" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="columns is-mobile m-b-0">
-              <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" style="min-width: 70px">性別:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="getGenderName(petlist.gender)" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3-mobile is-3-tablet is-3-desktop is-2-widescreen is-1-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" style="min-width: 80px">去勢/避妊:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="getNeuteredName(petlist.neutered)" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="column is-5-mobile is-4-tablet is-4-desktop is-3-widescreen is-2-fullhd">
-                <div class="field is-horizontal">
-                  <div class="field-label is-normal">
-                    <label class="label has-text-left" style="min-width: 80px">生年月日:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control">
-                        <input class="input is-static_" v-bind:value="birth_" readonly>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div> 
             </div>
             <span v-if="isOwner">
               <b-button class="button is-light" icon-left="fas fa-backward" @click="handleBack" style="margin-right:1rem">戻る</b-button>
@@ -616,7 +669,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator"; 
-import { db, firestore } from "@/scripts/firebase";
+import { db, firestore, storage } from "@/scripts/firebase";
 import { OwnerList, Pets, Species, Breeds, IwanBaseDocument, TodoList, Dmh, Accounth } from "@/scripts/datatypes";
 import OwnerTitle from "@/components/OwnerTitle.vue";
 import SourceLink from "@/components/SourceLink.vue";
@@ -644,67 +697,72 @@ extend('positive', no => {
   }
 })
 export default class IwanPet extends Vue {
-  title = "abc";
-  no = "";
-  ownerId = "";
+  title = "abc"
+  ownerNo: number | null = null
+  ownerFullname: string | null = null
+  no = "0"
+  ownerId = ""
   //ownerId_ = ""
-  petId = "";
-  name = ""; 
-  birth: Date | null = null;
-  birth_ = "";
-  ownerlist: OwnerList | null = null;
-  petlist: Pets | null = null;
-  dmhItems: Array<Dmh> = [];
-  dmhItemsLast: Array<Dmh> = [];
-  accounthItems: Array<Accounth> = [];
-  detacher?: firebase.Unsubscribe;
-  detacher2?: firebase.Unsubscribe;
-  detacher3?: firebase.Unsubscribe;
-  createPet = false;
-  species: Species | null = null;
-  breeds: Breeds | null = null;
-  breedsExtracted: Breeds | null = null;
-  breedName = '';
-  speciesSelected = '';
-  breedSelected = '';
-  genderSelected = '';
-  neuteredSelected = '';
-  gender: IwanBaseDocument | null = null;
-  neutered: IwanBaseDocument | null = null;
-  neuteredRemarks = "";
-  color = "";
-  colorList: IwanBaseDocument | null = null;
-  size = "";
-  sizeList: IwanBaseDocument | null = null;
-  since: Date | null = null;
-  character = "";
-  characterList: IwanBaseDocument | null = null;
-  environment = "";
-  environmentList: IwanBaseDocument | null = null;
-  cohabitation = "";
-  cohabitationList: IwanBaseDocument | null = null;
-  bw ="";
-  dead = "";
-  deadList: IwanBaseDocument | null = null;
-  deadRemarks = "";
-  dmsubjectList: IwanBaseDocument | null = null;
-  dmsubjectSelected = "";
-  dmcontent: IwanBaseDocument | null = null;
-  dmcontentExtracted: IwanBaseDocument | null = null;
-  errorNo = false;
-  pets: Pets | null = null;
-  editMode = false;
-  editModeVaccine = false;
+  petId = ""
+  name = "" 
+  nameKana = ""
+  birth: Date | null = null
+  birth_ = ""
+  ownerlist: OwnerList | null = null
+  petlist: Pets | null = null
+  dmhItems: Array<Dmh> = []
+  dmhItemsLast: Array<Dmh> = []
+  accounthItems: Array<Accounth> = []
+  detacher?: firebase.Unsubscribe
+  detacher2?: firebase.Unsubscribe
+  detacher3?: firebase.Unsubscribe
+  createPet = false
+  species: Species | null = null
+  breeds: Breeds | null = null
+  breedsExtracted: Breeds | null = null
+  breedName = ''
+  speciesSelected = ''
+  breedSelected = ''
+  genderSelected = ''
+  neuteredSelected = ''
+  gender: IwanBaseDocument | null = null
+  neutered: IwanBaseDocument | null = null
+  neuteredRemarks = ""
+  color = ""
+  colorList: IwanBaseDocument | null = null
+  size = ""
+  sizeList: IwanBaseDocument | null = null
+  since: Date | null = null
+  character = ""
+  characterList: IwanBaseDocument | null = null
+  environment = ""
+  environmentList: IwanBaseDocument | null = null
+  cohabitation = ""
+  cohabitationList: IwanBaseDocument | null = null
+  bw = ""
+  dead = ""
+  deadList: IwanBaseDocument | null = null
+  deadRemarks = ""
+  dmsubjectList: IwanBaseDocument | null = null
+  dmsubjectSelected = ""
+  dmcontent: IwanBaseDocument | null = null
+  dmcontentExtracted: IwanBaseDocument | null = null
+  errorNo = false
+  pets: Pets | null = null
+  editMode = false
+  editModeVaccine = false
   //selectedSpeciesName = '';
   //@Prop() document!: Pets;
   //@Prop() refDocument!: firebase.firestore.DocumentReference;
   isActive = this.$store.state.isActive
-  isActiveDefault = false;
+  isActiveDefault = false
 
   timest = firestore.Timestamp
   dmhAll = false
   checks = [false, false, false, false, false, false, false, false, false, false, 
-		false, false, false, false, false, false, false, false, false, false]
+    false, false, false, false, false, false, false, false, false, false]
+  downRef: any
+  image = ""
 
   async created() {
     this.ownerlist = (await this.refOwner.get()).data() as OwnerList;
@@ -717,23 +775,26 @@ export default class IwanPet extends Vue {
     if (this.petlist.no) this.no = this.petlist.no.toString(); 
     if (this.petlist.bw) this.bw = this.petlist.bw.toString();
     //if (this.petlist.petId) this.petId = this.petlist.petId;
-    this.petId = this.$route.params.petId;
+    this.petId = this.$route.params.petId
     this.ownerId = this.$route.params.parentId
+    this.ownerNo = this.petlist.ownerNo
+    this.ownerFullname = this.petlist.ownerFullname
     //this.ownerId_ = this.petlist.parentId
-    this.name = this.petlist.name;
-    this.speciesSelected = this.petlist.species;
-    this.breedSelected = this.petlist.breed;
-    this.breedName = this.petlist.breedName;
-    this.genderSelected = this.petlist.gender;
-    this.neuteredSelected = this.petlist.neutered;
+    this.name = this.petlist.name
+    this.nameKana = this.petlist.nameKana
+    this.speciesSelected = this.petlist.species
+    this.breedSelected = this.petlist.breed
+    this.breedName = this.petlist.breedName
+    this.genderSelected = this.petlist.gender
+    this.neuteredSelected = this.petlist.neutered
     //this.selectedSpeciesName = await this.getSpeciesName(this.petlist.species);
-    this.color = this.petlist.color;
-    this.size = this.petlist.size;
-    this.character = this.petlist.character;
-    this.environment = this.petlist.environment;
-    this.cohabitation = this.petlist.cohabitation;   
-    this.dead = this.petlist.dead;
-    this.deadRemarks = this.petlist.deadRemarks;
+    this.color = this.petlist.color
+    this.size = this.petlist.size
+    this.character = this.petlist.character
+    this.environment = this.petlist.environment
+    this.cohabitation = this.petlist.cohabitation  
+    this.dead = this.petlist.dead
+    this.deadRemarks = this.petlist.deadRemarks
     //this.changeTab(1)
     this.detacher = this.refPet
       .collection("dmh")
@@ -762,33 +823,49 @@ export default class IwanPet extends Vue {
       });
     this.reloadCache()
     
-    const speciesRef = db.collection("species");
-    const breedsRef = db.collection("breeds");
-    const genderRef = db.collection("gender");
-    const neuteredRef = db.collection("neutered");
-    const colorRef = db.collection("color");
-    const sizeRef = db.collection("size");
-    const characterRef = db.collection("character");
-    const environmentRef = db.collection("environment");
-    const cohabitationRef = db.collection("cohabitation");
-    const deadRef = db.collection("dead");
-    const dmsubjectRef = db.collection("dmsubject");
-    const dmcontentRef = db.collection("dmcontent");
+    const speciesRef = db.collection("species")
+    const breedsRef = db.collection("breeds")
+    const genderRef = db.collection("gender")
+    const neuteredRef = db.collection("neutered")
+    const colorRef = db.collection("color")
+    const sizeRef = db.collection("size")
+    const characterRef = db.collection("character")
+    const environmentRef = db.collection("environment")
+    const cohabitationRef = db.collection("cohabitation")
+    const deadRef = db.collection("dead")
+    const dmsubjectRef = db.collection("dmsubject")
+    const dmcontentRef = db.collection("dmcontent")
 
-    const result: any = [];
-    const resultB: any = [];
-    const resultG: any = [];
-    const resultN: any = [];
-    const resultC: any = [];
-    const resultS: any = [];
-    const resultCh: any = [];
-    const resultE: any = [];
-    const resultCo: any = [];
-    const resultD: any = [];
-    const resultDs: any = [];
-    const resultDc: any = [];
+    const result: any = []
+    const resultB: any = []
+    const resultG: any = []
+    const resultN: any = []
+    const resultC: any = []
+    const resultS: any = []
+    const resultCh: any = []
+    const resultE: any = []
+    const resultCo: any = []
+    const resultD: any = []
+    const resultDs: any = []
+    const resultDc: any = []
     
     //const petsRef = db.collectionGroup("pets");
+
+    //const storage = app.storage()
+    const storageRef = storage.ref()
+    this.downRef = storageRef.child('images/PIA01512_small.jpg')
+    console.log(this.downRef)
+    /*
+    this.downRef.getDownloadURL().then((url) => {
+      document.getElementById('image').src = url;
+    });
+    */
+    /*
+    this.downRef.getDownloadURL().then(url => {
+      this.image = url
+    })
+    */
+    this.image = "https://bulma.io/images/placeholders/128x128.png"
 
     await speciesRef//.where("owner", "==", this.$store.state.user.uid)
       .get({ source: 'cache' })

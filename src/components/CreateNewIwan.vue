@@ -57,8 +57,31 @@
             >
               <b-input v-model="nameNa" placeholder="名" @keyup.native="searchName"></b-input>
             </b-field>
+          </div>      
+        </div>
+        <div class="columns is-mobile m-b-5">
+          <div class="column is-6-mobile is-4-tablet is-4-desktop is-4-widescreen is-3-fullhd">
+            <ValidationProvider rules="required|max:8">
+              <div slot-scope="ProviderProps">
+                <b-field label="飼主名カナ※" :label-position="labelPosition"
+                  :type="{
+                    'is-danger': ProviderProps.errors[0] || errorNo,
+                  }"
+                  :message="{
+                    '必須項目です': ProviderProps.failedRules['required'],
+                  }"
+                >
+                  <b-input v-model="nameSeiKana" placeholder="姓カナ" ></b-input>
+                </b-field>
+              </div>
+            </ValidationProvider>
           </div>
-          
+          <div class="column is-6-mobile is-4-tablet is-4-desktop is-4-widescreen is-3-fullhd">
+            <b-field
+            >
+              <b-input v-model="nameNaKana" placeholder="名カナ" ></b-input>
+            </b-field>
+          </div>      
         </div>
         <div class="columns m-b-5">
           <div class="column is-5-mobile is-4-tablet is-4-desktop is-4-widescreen is-3-fullhd">
@@ -173,19 +196,19 @@
 
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { db, firestore } from "@/scripts/firebase";
-import KenAll from 'ken-all';
-import { eventBus } from "../main"; // 子 → 子 受け渡し用
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import { extend } from 'vee-validate';
-import { required, email, max, numeric, regex } from 'vee-validate/dist/rules';
+import Vue from "vue"
+import { Component, Prop } from "vue-property-decorator"
+import { db, firestore } from "@/scripts/firebase"
+import KenAll from 'ken-all'
+import { eventBus } from "../main" // 子 → 子 受け渡し用
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { extend } from 'vee-validate'
+import { required, email, max, numeric, regex } from 'vee-validate/dist/rules'
 //import * as rules from 'vee-validate/dist/rules';
 
-extend('required', required);
-extend('max', max);
-extend('numeric', numeric);
+extend('required', required)
+extend('max', max)
+extend('numeric', numeric)
 //extend('regex', regex);
 
 @Component({
@@ -196,27 +219,29 @@ extend('numeric', numeric);
 })
 
 export default class CreateNew extends Vue {
-  title = "";
-  no = "";
-  nameSei = "";
-  nameNa = "";
+  title = ""
+  no = ""
+  nameSei = ""
+  nameNa = ""
+  nameSeiKana = ""
+  nameNaKana = ""
   zip = "";
-  address1 = "";
-  address2 = "";
-  address3 = "";
-  phone1 = "";
-  phone2 = "";
-  phone3 = "";
-  phone4 = "";
-  occupation = "";
-  remarks = "";
-  errorNo = false;
-  errorName = false;
-  errorPhone1 = false;
-  errorPhone2 = false;
-  errorPhone3 = false;
-  errorAddress = false;
-  @Prop() readonly refCollection!: firebase.firestore.CollectionReference;
+  address1 = ""
+  address2 = ""
+  address3 = ""
+  phone1 = ""
+  phone2 = ""
+  phone3 = ""
+  phone4 = ""
+  occupation = ""
+  remarks = ""
+  errorNo = false
+  errorName = false
+  errorPhone1 = false
+  errorPhone2 = false
+  errorPhone3 = false
+  errorAddress = false
+  @Prop() readonly refCollection!: firebase.firestore.CollectionReference
 
   async handleCreate() {
     //const doc = 
@@ -227,6 +252,8 @@ export default class CreateNew extends Vue {
       no: Number(this.no),
       nameSei: this.nameSei,
       nameNa: this.nameNa,
+      nameSeiKana: this.nameSeiKana,
+      nameNaKana: this.nameNaKana,
       zip: this.zip,
       address1: this.address1,
       address2: this.address2,

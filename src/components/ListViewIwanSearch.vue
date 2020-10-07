@@ -294,7 +294,7 @@ export default class ListViewIwanSearch extends Vue {
     return this.refCollection 
       .where("owner", "==", this.$store.state.user.uid)
       .where("keywords", "array-contains", word)
-      .orderBy("no")
+      .orderBy("ownerNo").orderBy("no")
       .get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
           const d = doc.data()

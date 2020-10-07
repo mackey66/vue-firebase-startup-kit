@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <div class="table-container">
+          <div class="table-container m-b-10">
             <!-- TableヘッダとsubheadingはeditModeとelse（列数含め）どちらも同じようにしないとthis.name is not a functionエラーになるので注意! -->
             <b-table :data="accountdItems" :mobile-cards="false" narrowed :selected.sync="selected" focusable >
               <template slot-scope="p">
@@ -165,20 +165,114 @@
                   </div>
                 </b-table-column>
               </template>
-              <template slot="footer">
+              <!--<template slot="footer">
                 <nav class="level">
                   <div class="level-left">                 
                   </div>
-                  <!--<div class="level-right" style="margin-right:15.5rem">
+                  <div class="level-right" style="margin-right:15.5rem">
                     <div class="m-l-20">合計(税込): {{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}</div>
-                  </div>-->
-                  <!--<div class="level-right" style="margin-right:4.3rem">
+                  </div>
+                  <div class="level-right" style="margin-right:4.3rem">
                     <div class="m-l-20">合計: {{ numberFormatterCurrency(sum) }}</div>
                     <div class="m-l-20" style="font-weight: normal;">外:{{ numberFormatterCurrency(taxEx) }} 内:{{ numberFormatterCurrency(taxIn) }}</div>
-                  </div>-->              
+                  </div>             
                 </nav>
-              </template>
+              </template>-->
             </b-table>
+          </div>
+
+          <div v-if="accounth" class="columns is-mobile m-b-0">
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal" >
+                  <label class="label has-text-left" style="width: 100px">前回繰越:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="accounth.preDeposit" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">今回合計:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(ownerExpense)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">請求額:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.preDeposit?accounth.preDeposit:0 + Number(ownerExpense))" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="accounth" class="columns is-mobile m-b-0">
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">預かり:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <b-input type="number" v-bind:value="accounth.payment" style="width: 120px" @change.native="saveAccounthPayment($event.target.value)"/>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal" >
+                  <label class="label has-text-left" style="width: 100px">お釣り:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.change)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div> 
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">次回繰越:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.deposit)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="subtitle is-7">
+            <b-checkbox v-model="accounth.carry" @input="saveAccounthCarry($event); saveAccounthPayment(accounth.payment)">
+              繰り越す
+            </b-checkbox>
           </div>
 
           <span v-if="isOwner">
@@ -235,7 +329,7 @@
               </div>
             </div>
           </div>
-          <div class="table-container">
+          <div class="table-container m-b-10">
             <b-table :data="accountdItems" :mobile-cards="false" :selected.sync="selected" narrowed focusable >
               <template slot-scope="p">
                 <b-table-column field="no" class="subtitle is-7" style="vertical-align: middle;" label="" width="30">{{ p.index + 1 }}</b-table-column>
@@ -280,21 +374,115 @@
                 </b-table-column>
                 <b-table-column width="0" />
               </template>
-              <template slot="footer">
+              <!--<template slot="footer">
                 <nav class="level">
                   <div class="level-left">                 
                   </div>
-                  <!--<div class="level-right" style="margin-right:15.5rem">
+                  <div class="level-right" style="margin-right:15.5rem">
                     <div class="m-l-20">合計(税込): {{ numberFormatterCurrency(Number(sum) + Number(taxEx)) }}</div>
-                  </div>-->             
+                  </div>             
                 </nav>
-              </template>
+              </template>-->
             </b-table>
+          </div>
+
+          <div v-if="accounth" class="columns is-mobile m-b-0">
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal" >
+                  <label class="label has-text-left" style="width: 100px">前回繰越:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.preDeposit)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">今回合計:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(ownerExpense)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">請求額:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.preDeposit?accounth.preDeposit:0 + Number(ownerExpense))" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>     
+          </div>
+          <div v-if="accounth" class="columns is-mobile m-b-0">
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">預かり:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.payment.toString())" readonly style="width: 120px; text-align:right" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal" >
+                  <label class="label has-text-left" style="width: 100px">お釣り:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.change)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>         
+            <div class="column is-4-mobile is-4-tablet is-4-desktop is-3-widescreen is-3-fullhd">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label has-text-left" style="width: 100px">次回繰越:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control">
+                      <input class="input" v-bind:value="numberFormatterCurrency(accounth.deposit)" readonly style="width: 120px; text-align: right;" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="subtitle is-7">
+            <b-checkbox v-model="accounth.carry" disabled>
+              繰り越す
+            </b-checkbox>
           </div>
 
           <span v-if="isOwner">
             <div class="level is-mobile">
-              <div class="level-left m-t-15">
+              <div class="level-left m-t-5">
                 <b-button class="button is-light" icon-left="fas fa-backward" @click="handleBack">戻る</b-button>
                 <b-button
                   @click="handleEdit()"
@@ -456,7 +644,27 @@ export default class IwanAccounth extends Vue {
     }
   */
 
-  async created() {
+  created() {
+    this.refAccounth.get().then(doc => {
+      if (doc.exists) {
+        this.accounth = doc.data() as Accounth
+        this.sum = this.accounth.sum.toString()
+        this.taxIn = this.accounth.taxIn.toString()
+        this.taxEx = this.accounth.taxEx.toString()
+        this.insRate = this.accounth.insRate.toString()
+        this.insExpense = this.accounth.insExpense.toString()
+        this.ownerExpense = this.accounth.ownerExpense.toString()
+        //console.log("carry =", this.accounth.carry)
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    }).catch(function(error) {
+      console.log("Error getting document:", error);
+    });
+  }
+
+  async mounted() {
     this.ownerlist = (await this.refOwner.get()).data() as OwnerList;
     this.petlist = (await this.refPet.get()).data() as Pets;
     if (this.petlist.birth) {
@@ -487,24 +695,6 @@ export default class IwanAccounth extends Vue {
 
     this.el = document.getElementById('target') as HTMLElement
 
-    this.refAccounth.get().then(doc => {
-      if (doc.exists) {
-        this.accounth = doc.data() as Accounth
-        this.sum = this.accounth.sum.toString()
-        this.taxIn = this.accounth.taxIn.toString()
-        this.taxEx = this.accounth.taxEx.toString()
-        this.insRate = this.accounth.insRate.toString()
-        this.insExpense = this.accounth.insExpense.toString()
-        this.ownerExpense = this.accounth.ownerExpense.toString()
-        //this.condDate = this.accounth.condDate.toDate()
-        //console.log("Document data:", doc.data());
-      } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-      }
-    }).catch(function(error) {
-      console.log("Error getting document:", error);
-    });
 
     
 
@@ -869,6 +1059,30 @@ export default class IwanAccounth extends Vue {
   saveAccounthInsRate(value: number) {
     this.refAccounth.update({
         insRate: value
+      });
+  }
+  async saveAccounthPayment(value: number) {
+    const dif = this.accounth!.preDeposit?this.accounth!.preDeposit:0 + Number(this.ownerExpense) - value
+    let d = 0
+    let c = 0
+    this.accounth!.payment = value
+    if (this.accounth!.carry) {      
+      d = dif
+    } else {     
+      c = dif
+    }
+    this.accounth!.deposit = d
+    this.accounth!.change = c
+    await this.refAccounth.update({
+        payment: Number(value),
+        deposit: d,
+        change: c
+      });
+  }
+  saveAccounthCarry(value: boolean) {
+    //this.accounth!.carry = value
+    this.refAccounth.update({
+        carry: value
       });
   }
   saveAccountdDate(id: string, value: string) {

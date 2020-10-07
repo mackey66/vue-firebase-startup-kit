@@ -31,8 +31,8 @@ export interface OwnerList {
 	title: string;
 	nameSei: string;
 	nameNa: string;
-	name_sei_kana: string;
-	name_na_kana: string;
+	nameSeiKana: string;
+	nameNaKana: string;
 	zip: string;
 	address1: string;
 	address2: string;
@@ -65,6 +65,8 @@ export interface Pets extends BaseDocument {
 	bw: number;
 	dead: string;
 	deadRemarks: string;
+	ownerNo: number;
+	ownerFullname: string;
 }
 
 export interface IwanBaseDocument {
@@ -108,15 +110,19 @@ export interface Accounth extends IwanBaseDocument {
 	parentId: string;
 	condDate: firebase.firestore.Timestamp;
 	nextDate: firebase.firestore.Timestamp;
-	sum: Number;
-	taxIn: Number;
-	taxEx: Number;
-	payment: Number;
-	debt: Number;
-	deposit: Number;
-	insRate: Number;
-	insExpense: Number;
-	ownerExpense: Number;
+	sum: number;
+	taxIn: number;
+	taxEx: number;
+	payment: number;
+	preDebt: number;
+	preDeposit: number;
+	debt: number;
+	deposit: number;
+	insRate: number;
+	insExpense: number;
+	ownerExpense: number;
+	change: number;
+	carry: boolean;
 }
 
 export interface Accountd extends IwanBaseDocument {
@@ -126,12 +132,12 @@ export interface Accountd extends IwanBaseDocument {
 	mtsubject: string;
 	mtclass: string
 	item: string;
-	unitPrice: Number;
-	quantity: Number;
-	amount: Number;
+	unitPrice: number;
+	quantity: number;
+	amount: number;
 	insurance: boolean;
 	tax: string;
-	taxIn: Number;
-	taxEx: Number;
-	ins: Number;
+	taxIn: number;
+	taxEx: number;
+	ins: number;
 }
